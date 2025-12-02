@@ -1,5 +1,6 @@
-// tailwind.config.js
-export default {
+// frontend/tailwind.config.js   ← MUST be CommonJS!
+/** @type {import('tailwindcss').Config} */
+export default  {
   content: [
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",

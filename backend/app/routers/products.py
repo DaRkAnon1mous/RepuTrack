@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session, joinedload
 from typing import List
 import app.models as models
 import app.schemas as schemas
-from database import get_db
+from ..database import get_db
 from ..dependencies import get_current_user
 
 router = APIRouter(prefix="/api/products", tags=["products"])
