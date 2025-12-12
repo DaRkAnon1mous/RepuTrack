@@ -2,8 +2,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session, joinedload
 from typing import List
-import app.models as models
-import app.schemas as schemas
+import backend.app.models as models
+import backend.app.schemas as schemas
 from ..database import get_db
 from ..dependencies import get_current_user
 
@@ -45,6 +45,24 @@ def create_product(
     )
 
     return db_product
+
+@router.delete("/{product_id}")
+def delete_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    product = db.query(models.Product).filter(
+        models.Product.id == product_id,
+        models.Product.user_id == current_user.id
+    ).first()
+    
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    db.delete(product)
+    db.commit()
+    return {"message": "Product deleted successfully"}
 
 
 @router.get("/", response_model=List[schemas.ProductOut])

@@ -1,4 +1,4 @@
-// frontend/src/App.jsx  ← FINAL WITH ADD PRODUCT FORM
+// frontend/src/App.jsx
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
@@ -11,6 +11,7 @@ function Dashboard() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   // Form state
   const [name, setName] = useState("");
@@ -18,21 +19,22 @@ function Dashboard() {
   const [links, setLinks] = useState([{ platform: "amazon", url: "" }]);
 
   // Load products
+  const loadProducts = async () => {
+    try {
+      const token = await window.Clerk.session.getToken({ template: "fastapi" });
+      const res = await axios.get("/api/products", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProducts(res.data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const token = await window.Clerk.session.getToken({ template: "fastapi" });
-        const res = await axios.get("/api/products", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setProducts(res.data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
+    loadProducts();
   }, []);
 
   // Add new link field
@@ -60,9 +62,25 @@ function Dashboard() {
       setImageUrl("");
       setLinks([{ platform: "amazon", url: "" }]);
       setShowForm(false);
-      window.location.reload(); // simple refresh
+      await loadProducts();
     } catch (err) {
       alert("Error adding product: " + (err.response?.data?.detail || err.message));
+    }
+  };
+
+  // Delete product
+  const handleDelete = async (productId) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+    
+    try {
+      const token = await window.Clerk.session.getToken({ template: "fastapi" });
+      await axios.delete(`/api/products/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await loadProducts();
+      setSelectedProduct(null);
+    } catch (err) {
+      alert("Error deleting product: " + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -184,19 +202,111 @@ function Dashboard() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2">
             {products.map((p) => (
-              <div key={p.id} className="bg-white p-8 rounded-2xl shadow-lg">
+              <div 
+                key={p.id} 
+                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+                onClick={() => setSelectedProduct(p)}
+              >
                 {p.image_url && (
-                  <img src={p.image_url} alt={p.name} className="w-full h-48 object-cover rounded-lg mb-4" />
+                  <img 
+                    src={p.image_url} 
+                    alt={p.name} 
+                    className="w-full h-48 object-cover rounded-lg mb-4" 
+                  />
                 )}
                 <h3 className="text-2xl font-semibold text-gray-900">{p.name}</h3>
                 <p className="text-gray-600 mt-3">
-                  {p.links.length} platform{p.links.length > 1 && "s"} monitored
+                  {p.links?.length || 0} platform{(p.links?.length || 0) !== 1 && "s"} monitored
                 </p>
+                <p className="text-sm text-gray-500 mt-2">Click to view details</p>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* PRODUCT DETAIL MODAL */}
+      {selectedProduct && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-6 z-50"
+          onClick={() => setSelectedProduct(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-8">
+              <div className="flex justify-between items-start mb-6">
+                <h2 className="text-3xl font-bold text-gray-900">{selectedProduct.name}</h2>
+                <button 
+                  onClick={() => setSelectedProduct(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              {selectedProduct.image_url && (
+                <img 
+                  src={selectedProduct.image_url} 
+                  alt={selectedProduct.name}
+                  className="w-full h-64 object-cover rounded-lg mb-6"
+                />
+              )}
+
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  Tracked Links ({selectedProduct.links?.length || 0})
+                </h3>
+                <div className="space-y-3">
+                  {selectedProduct.links?.map((link) => (
+                    <div key={link.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full capitalize">
+                          {link.platform}
+                        </span>
+                        <a 
+                          href={link.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 hover:underline text-sm truncate max-w-xs"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {link.url}
+                        </a>
+                      </div>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-black text-white text-sm rounded-lg hover:bg-gray-800 transition"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Visit →
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-6 border-t">
+                <button
+                  onClick={() => handleDelete(selectedProduct.id)}
+                  className="flex-1 px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition"
+                >
+                  Delete Product
+                </button>
+                <button
+                  onClick={() => setSelectedProduct(null)}
+                  className="flex-1 px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

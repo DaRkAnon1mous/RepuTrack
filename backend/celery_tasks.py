@@ -9,7 +9,7 @@ import logging
 
 # Celery config
 celery = Celery("reputrack", broker="redis://default:AXr_AAIncDJjNGE2ZTc5M2JiYmM0YjQ0OWE2OTlmZjdlYjU5YzJmNXAyMzE0ODc@factual-dodo-31487.upstash.io:6379")
-
+# celery command to run : celery -A celery_tasks worker --loglevel=info --concurrency=1
 @celery.task
 def scrape_and_analyze_all():
     db = SessionLocal()
