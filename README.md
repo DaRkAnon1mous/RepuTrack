@@ -742,9 +742,9 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 
 ## 📧 Contact
 
-**Your Name** - [@yourtwitter](https://twitter.com/yourtwitter) - your.email@example.com
+**Your Name** - Shrey Dikshant - shreydikshant144@gmail.com
 
-**Project Link**: [https://github.com/yourusername/reputracker](https://github.com/yourusername/reputracker)
+**Project Link**: [https://github.com/yourusername/reputracker](https://github.com/DaRkAnon1mous/RepuTrack)
 
 ---
 
