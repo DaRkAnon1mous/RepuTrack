@@ -39,5 +39,6 @@ class ProductLink(Base):
     last_rating = Column(Float, nullable=True)
     last_scraped = Column(DateTime(timezone=True), nullable=True)
     fake_ratio = Column(Float, default=0.0)
+    sentiment_score = Column(Float, nullable=True)
 
     product = relationship("Product", back_populates="links")

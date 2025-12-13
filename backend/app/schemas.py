@@ -1,6 +1,6 @@
 # backend/app/schemas.py
 from pydantic import BaseModel, HttpUrl
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 
 class ProductLinkCreate(BaseModel):
@@ -16,8 +16,12 @@ class ProductLinkOut(BaseModel):
     id: int
     platform: str
     url: str
-    last_rating: Optional[float]
-    fake_ratio: float
+    last_rating: Optional[float] = None
+    fake_ratio: Optional[float] = None
+    sentiment_score: Optional[float] = None
+    last_scraped: Optional[datetime] = None  
+    scrape_note: Optional[str] = None  
+    reviews_json: Optional[List[Dict[str, Any]]] = None  
 
     class Config:
         from_attributes = True

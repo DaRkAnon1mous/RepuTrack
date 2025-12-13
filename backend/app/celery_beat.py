@@ -1,9 +1,12 @@
 # backend/celery_beat.py
 from celery import Celery
 from celery.schedules import crontab
+import os 
+import dotenv
+dotenv.load_dotenv()
 
-app = Celery('reputrack', broker='redis://default:AXr_AAIncDJjNGE2ZTc5M2JiYmM0YjQ0OWE2OTlmZjdlYjU5YzJmNXAyMzE0ODc@factual-dodo-31487.upstash.io:6379')
-
+app = Celery('reputrack', broker=os.getenv("REDIS_URL"))
+# command = celery -A app.celery_tasks beat --loglevel=info
 app.conf.beat_schedule = {
     'scrape-every-14-days': {
         'task': 'celery_tasks.scrape_and_analyze_all',
