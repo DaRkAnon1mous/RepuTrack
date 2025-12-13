@@ -8,7 +8,13 @@
 [![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?style=flat&logo=postgresql&logoColor=white)](https://postgresql.org)
 
-**[Live Demo](#) • [Documentation](#) • [Report Bug](#) • [Request Feature](#)**
+•  [Live Demo](#)   
+
+•  [Backend Main HF Space]()  
+
+•  [Celery Worker HF Space]()  
+
+•  [Celery Beat HF Space]()  
 
 </div>
 
