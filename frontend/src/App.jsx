@@ -4,7 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function Dashboard() {
   const { user } = useUser();
