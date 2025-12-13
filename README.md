@@ -8,13 +8,13 @@
 [![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?style=flat&logo=postgresql&logoColor=white)](https://postgresql.org)
 
-•  [Live Demo](#)   
+•  [Live Demo](https://reputrack.vercel.app/)   
 
-•  [Backend Main HF Space]()  
+•  [Backend Main HF Space](https://darkanon1mous-reputrack-api.hf.space)  
 
-•  [Celery Worker HF Space]()  
+•  [Celery Worker HF Space](https://darkanon1mous-reputrack-worker.hf.space)  
 
-•  [Celery Beat HF Space]()  
+•  [Celery Beat HF Space](https://darkanon1mous-reputrack-beat.hf.space)  
 
 </div>
 
